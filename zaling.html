@@ -1,0 +1,301 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Recycle Hero - เรียกซาเล้งรับขยะ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100 font-sans min-h-screen">
+
+    <div class="max-w-md mx-auto bg-white min-h-screen shadow-lg flex flex-col justify-between relative">
+        
+        <header class="bg-green-600 text-white p-4 flex justify-between items-center shadow-md">
+            <h1 class="font-bold text-xl"><i class="fa-solid fa-recycle mr-2"></i>Recycle Hero</h1>
+            <span id="userBadge" class="text-xs bg-green-800 px-2 py-1 rounded-full hidden"></span>
+        </header>
+
+        <main class="p-4 flex-grow">
+
+            <div id="loginScreen" class="flex flex-col items-center justify-center h-full space-y-6 my-10">
+                <div class="text-center">
+                    <h2 class="text-2xl font-bold text-gray-800">ยินดีต้อนรับ</h2>
+                    <p class="text-gray-500 text-sm">กรุณาเลือกประเภทผู้ใช้งานเพื่อเริ่มต้น</p>
+                </div>
+                
+                <button onclick="selectRole('user')" class="w-full bg-emerald-500 hover:bg-emerald-600 text-white p-4 rounded-xl shadow-md flex items-center justify-between transition">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-user-trash text-2xl"></i>
+                        <div class="text-left">
+                            <div class="font-bold">ผู้ทิ้งขยะ</div>
+                            <div class="text-xs text-emerald-100">เรียกซาเล้งมารับ สะสมแต้ม</div>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+
+                <button onclick="selectRole('saleng')" class="w-full bg-amber-500 hover:bg-amber-600 text-white p-4 rounded-xl shadow-md flex items-center justify-between transition">
+                    <div class="flex items-center space-x-3">
+                        <i class="fa-solid fa-truck-pickup text-2xl"></i>
+                        <div class="text-left">
+                            <div class="font-bold">พี่ซาเล้ง</div>
+                            <div class="text-xs text-amber-100">ค้นหาขยะ โอนแต้มให้ผู้ทิ้ง</div>
+                        </div>
+                    </div>
+                    <i class="fa-solid fa-chevron-right"></i>
+                </button>
+            </div>
+
+            <div id="addressScreen" class="hidden space-y-4">
+                <h2 class="text-xl font-bold text-gray-800 border-b pb-2">ลงทะเบียนที่อยู่แรกเข้า</h2>
+                <form onsubmit="saveAddress(event)" class="space-y-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">ชื่อ-นามสกุล / ชื่อร้าน</label>
+                        <input type="text" id="inputName" required class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="สมชาย ใจดี">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">เบอร์โทรศัพท์</label>
+                        <input type="tel" id="inputPhone" required class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none" placeholder="0812345678">
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700">ที่อยู่ / จุดสังเกต</label>
+                        <textarea id="inputAddress" required class="w-full p-2 border rounded-lg focus:ring-2 focus:ring-green-500 outline-none" rows="3" placeholder="บ้านเลขที่, ซอย, ถนน..."></textarea>
+                    </div>
+                    <button type="submit" class="w-full bg-green-600 text-white py-3 rounded-lg font-bold shadow hover:bg-green-700">เข้าสู่ระบบ</button>
+                </form>
+            </div>
+
+            <div id="userDashboard" class="hidden space-y-4">
+                <div class="bg-gradient-to-r from-emerald-500 to-teal-600 text-white p-4 rounded-xl shadow-md flex justify-between items-center">
+                    <div>
+                        <p class="text-xs text-emerald-100">แต้มสะสมของคุณ</p>
+                        <p class="text-3xl font-bold"><span id="userPoints">0</span> <span class="text-sm font-normal">แต้ม</span></p>
+                    </div>
+                    <i class="fa-solid fa-coins text-4xl opacity-80"></i>
+                </div>
+
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="showSection('callSaleng')" class="bg-green-50 border border-green-200 text-green-700 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 hover:bg-green-100">
+                        <i class="fa-solid fa-bullhorn text-3xl"></i>
+                        <span class="font-bold text-sm">เรียกซาเล้ง</span>
+                    </button>
+                    <button onclick="showSection('redeemStore')" class="bg-orange-50 border border-orange-200 text-orange-700 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 hover:bg-orange-100">
+                        <i class="fa-solid fa-store text-3xl"></i>
+                        <span class="font-bold text-sm">แลกของรางวัล</span>
+                    </button>
+                </div>
+
+                <div id="callSaleng" class="hidden border p-4 rounded-xl bg-gray-50 space-y-3">
+                    <h3 class="font-bold text-gray-700">ถ่ายรูป/อัปโหลดรูปขยะ</h3>
+                    <input type="file" id="wasteImage" accept="image/*" class="w-full text-sm text-gray-500 file:mr-4 file:py-2 file:px-4 file:rounded-full file:border-0 file:text-sm file:font-semibold file:bg-green-50 file:text-green-700 hover:file:bg-green-100">
+                    <textarea id="wasteDesc" class="w-full p-2 border rounded-lg text-sm" placeholder="ระบุประเภทขยะเพิ่มเติม (เช่น ขวดพลาสติก 2 ถุงใหญ่, ลังกระดาษ)"></textarea>
+                    <button onclick="submitCall()" class="w-full bg-green-600 text-white py-2 rounded-lg font-bold text-sm">ส่งสัญญาณเรียกซาเล้ง</button>
+                </div>
+
+                <div id="redeemStore" class="hidden border p-4 rounded-xl bg-gray-50 space-y-3">
+                    <h3 class="font-bold text-gray-700">รายการแลกของรางวัล</h3>
+                    <div class="space-y-2">
+                        <div class="flex justify-between items-center bg-white p-2 rounded shadow-sm">
+                            <span class="text-sm">ไข่ไก่ 1 แผง (100 แต้ม)</span>
+                            <button onclick="redeem(100)" class="bg-orange-500 text-white text-xs px-3 py-1 rounded hover:bg-orange-600">แลก</button>
+                        </div>
+                        <div class="flex justify-between items-center bg-white p-2 rounded shadow-sm">
+                            <span class="text-sm">น้ำมันพืช 1 ลิตร (150 แต้ม)</span>
+                            <button onclick="redeem(150)" class="bg-orange-500 text-white text-xs px-3 py-1 rounded hover:bg-orange-600">แลก</button>
+                        </div>
+                        <div class="flex justify-between items-center bg-white p-2 rounded shadow-sm">
+                            <span class="text-sm">คูปองส่วนลด 50 บาท (200 แต้ม)</span>
+                            <button onclick="redeem(200)" class="bg-orange-500 text-white text-xs px-3 py-1 rounded hover:bg-orange-600">แลก</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="salengDashboard" class="hidden space-y-4">
+                <div class="grid grid-cols-2 gap-4">
+                    <button onclick="showSection('salengMap')" class="bg-amber-50 border border-amber-200 text-amber-700 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 hover:bg-amber-100">
+                        <i class="fa-solid fa-map-location-dot text-3xl"></i>
+                        <span class="font-bold text-sm">แผนที่รับขยะ (Map)</span>
+                    </button>
+                    <button onclick="showSection('salengPay')" class="bg-blue-50 border border-blue-200 text-blue-700 p-4 rounded-xl flex flex-col items-center justify-center space-y-2 hover:bg-blue-100">
+                        <i class="fa-solid fa-hand-holding-dollar text-3xl"></i>
+                        <span class="font-bold text-sm">จ่ายแต้มค่าขยะ</span>
+                    </button>
+                </div>
+
+                <div id="salengMap" class="hidden border p-4 rounded-xl bg-gray-100 space-y-3">
+                    <h3 class="font-bold text-gray-700">จุดที่มีการเรียกรับขยะใกล้คุณ</h3>
+                    <div class="w-full h-48 bg-blue-100 rounded-lg flex flex-col items-center justify-center relative border-2 border-dashed border-blue-300">
+                        <i class="fa-solid fa-map-pin text-red-500 text-3xl absolute top-10 left-12 animate-bounce"></i>
+                        <i class="fa-solid fa-map-pin text-red-500 text-3xl absolute bottom-8 right-16 animate-bounce"></i>
+                        <span class="text-xs text-gray-500 bg-white/80 px-2 py-1 rounded">(จำลองระบบ Map - แสดงหมุดงานรับขยะ)</span>
+                    </div>
+                    <div id="jobList" class="space-y-2 text-xs">
+                        </div>
+                </div>
+
+                <div id="salengPay" class="hidden border p-4 rounded-xl bg-gray-50 space-y-3">
+                    <h3 class="font-bold text-gray-700">โอนแต้มให้ผู้ทิ้งขยะ</h3>
+                    <div>
+                        <label class="block text-xs font-medium text-gray-600 mb-1">ระบุจำนวนแต้มที่ต้องการจ่าย</label>
+                        <input type="number" id="payPointsInput" class="w-full p-2 border rounded-lg text-sm" placeholder="เช่น 50">
+                    </div>
+                    <button onclick="transferPoints()" class="w-full bg-blue-600 text-white py-2 rounded-lg font-bold text-sm hover:bg-blue-700">ยืนยันการจ่ายแต้ม</button>
+                </div>
+            </div>
+
+        </main>
+
+        <footer class="p-4 border-t text-center bg-gray-50">
+            <button onclick="resetApp()" class="text-xs text-red-500 hover:underline">
+                <i class="fa-solid fa-rotate-right"></i> ออกจากระบบ / สลับบัญชี
+            </button>
+        </footer>
+
+    </div>
+
+    <script>
+        // State สำหรับเก็บข้อมูลใน Prototype
+        let currentUser = {
+            role: '', // 'user' หรือ 'saleng'
+            name: '',
+            phone: '',
+            address: '',
+            points: 100 // ให้แต้มเริ่มต้นไว้ทดสอบ
+        };
+
+        let activeJobs = [
+            { id: 1, name: 'คุณสมชาย', address: 'ซอยสุขุมวิท 21', desc: 'ขวดพลาสติก 5 กก.', status: 'รอรับ' }
+        ];
+
+        // 1. เลือกบทบาท
+        function selectRole(role) {
+            currentUser.role = role;
+            document.getElementById('loginScreen').classList.add('hidden');
+            
+            // ตรวจสอบว่าเคยกรอกที่อยู่หรือยัง (จำลอง)
+            if (!currentUser.address) {
+                document.getElementById('addressScreen').classList.remove('hidden');
+            } else {
+                loadDashboard();
+            }
+        }
+
+        // 2. บันทึกที่อยู่
+        function saveAddress(e) {
+            e.preventDefault();
+            currentUser.name = document.getElementById('inputName').value;
+            currentUser.phone = document.getElementById('inputPhone').value;
+            currentUser.address = document.getElementById('inputAddress').value;
+
+            document.getElementById('addressScreen').classList.add('hidden');
+            loadDashboard();
+        }
+
+        // 3. โหลดหน้า Dashboard ตาม Role
+        function loadDashboard() {
+            const badge = document.getElementById('userBadge');
+            badge.classList.remove('hidden');
+
+            if (currentUser.role === 'user') {
+                badge.innerText = `ผู้ทิ้ง: ${currentUser.name}`;
+                document.getElementById('userDashboard').classList.remove('hidden');
+                document.getElementById('userPoints').innerText = currentUser.points;
+            } else {
+                badge.innerText = `ซาเล้ง: ${currentUser.name}`;
+                document.getElementById('salengDashboard').classList.remove('hidden');
+                renderJobs();
+            }
+        }
+
+        // สลับซ่อน/แสดง เมนูย่อย
+        function showSection(sectionId) {
+            const sections = ['callSaleng', 'redeemStore', 'salengMap', 'salengPay'];
+            sections.forEach(id => {
+                const el = document.getElementById(id);
+                if (el) el.classList.add('hidden');
+            });
+            document.getElementById(sectionId).classList.remove('hidden');
+        }
+
+        // --- ฟังก์ชันฝั่งผู้ทิ้งขยะ ---
+        function submitCall() {
+            const desc = document.getElementById('wasteDesc').value;
+            const fileInput = document.getElementById('wasteImage');
+
+            if (!desc && fileInput.files.length === 0) {
+                alert('กรุณาอัปโหลดรูปภาพหรือระบุรายละเอียดขยะ');
+                return;
+            }
+
+            // เพิ่มรายการลงในอาร์เรย์ (จำลอง)
+            activeJobs.push({
+                id: Date.now(),
+                name: currentUser.name,
+                address: currentUser.address,
+                desc: desc || 'มีรูปภาพขยะแนบมา',
+                status: 'รอรับ'
+            });
+
+            alert('ส่งสัญญาณเรียบร้อยแล้ว! พี่ซาเล้งในพื้นที่กำลังตรวจสอบ');
+            document.getElementById('wasteDesc').value = '';
+            fileInput.value = '';
+            document.getElementById('callSaleng').classList.add('hidden');
+        }
+
+        function redeem(cost) {
+            if (currentUser.points >= cost) {
+                currentUser.points -= cost;
+                document.getElementById('userPoints').innerText = currentUser.points;
+                alert('แลกของรางวัลสำเร็จ!');
+            } else {
+                alert('แต้มสะสมของคุณไม่พอสำหรับการแลก');
+            }
+        }
+
+        // --- ฟังก์ชันฝั่งซาเล้ง ---
+        function renderJobs() {
+            const jobList = document.getElementById('jobList');
+            jobList.innerHTML = '';
+            
+            activeJobs.forEach(job => {
+                jobList.innerHTML += `
+                    <div class="bg-white p-2 rounded border border-gray-200 shadow-sm flex justify-between items-center">
+                        <div>
+                            <p class="font-bold text-gray-800">${job.name} (${job.address})</p>
+                            <p class="text-gray-500">${job.desc}</p>
+                        </div>
+                        <span class="bg-amber-100 text-amber-800 text-[10px] px-2 py-1 rounded font-bold">${job.status}</span>
+                    </div>
+                `;
+            });
+        }
+
+        function transferPoints() {
+            const points = parseInt(document.getElementById('payPointsInput').value);
+            if (points && points > 0) {
+                // จำลองการบวกแต้มให้ฝั่งผู้ใช้
+                currentUser.points += points;
+                alert(`โอนแต้มจำนวน ${points} แต้ม ให้ผู้ทิ้งขยะเรียบร้อยแล้ว`);
+                document.getElementById('payPointsInput').value = '';
+                document.getElementById('salengPay').classList.add('hidden');
+            } else {
+                alert('กรุณาระบุจำนวนแต้มให้ถูกต้อง');
+            }
+        }
+
+        // Reset เพื่อเริ่มเล่นใหม่
+        function resetApp() {
+            document.getElementById('userDashboard').classList.add('hidden');
+            document.getElementById('salengDashboard').classList.add('hidden');
+            document.getElementById('addressScreen').classList.add('hidden');
+            document.getElementById('loginScreen').classList.remove('hidden');
+            document.getElementById('userBadge').classList.add('hidden');
+            
+            // แสดงผลล้างหน้า
+            showSection('');
+        }
+    </script>
+</body>
+</html>
